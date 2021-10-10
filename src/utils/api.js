@@ -40,8 +40,8 @@ class Api {
                 'Content-Type': this._headers["Content-Type"]
             },
             body: JSON.stringify({
-                name: userData.nameInput,
-                about: userData.jobInput
+                name: userData.name,
+                about: userData.about
             })
         }).then(res => this._getResponse(res));
     };
@@ -54,8 +54,8 @@ class Api {
                 'Content-Type': this._headers["Content-Type"]
             },
             body: JSON.stringify({
-                name: cardData.titleInput,
-                link: cardData.linkInput
+                name: cardData.name,
+                link: cardData.link
             })
         }).then(res => this._getResponse(res));
     };
@@ -70,19 +70,9 @@ class Api {
         }).then(res => this._getResponse(res));
     };
 
-    addLike(id) {
+    changeLikeCardStatus(id, like) {
         return fetch(`${this._baseUrl}/cards/likes/${id}`, {
-            method: 'PUT',
-            headers: {
-                authorization: this._headers.authorization,
-                'Content-Type': this._headers["Content-Type"]
-            }
-        }).then(res => this._getResponse(res));
-    };
-
-    removeLike(id) {
-        return fetch(`${this._baseUrl}/cards/likes/${id}`, {
-            method: 'DELETE',
+            method: like ? 'DELETE' : 'PUT',
             headers: {
                 authorization: this._headers.authorization,
                 'Content-Type': this._headers["Content-Type"]
