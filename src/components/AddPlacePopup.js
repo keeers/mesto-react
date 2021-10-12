@@ -1,39 +1,61 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
 
-const AddPlacePopup = ({ isOpen, onClose, onAddPlace, isValid, onChange }) => {
+const AddPlacePopup = ({ isOpen, onClose, onAddPlace }) => {
 
-    const nameRef = React.useRef();
-    const linkRef = React.useRef();
-    const nameMessage = React.useRef();
-    const linkMessage = React.useRef();
+    const [cardName, setCardName] = React.useState('');
+    const [cardLink, setCardLink] = React.useState('');
+    const [inputNameValid, setInputNameValid] = React.useState(false);
+    const [inputLinkValid, setInputLinkValid] = React.useState(false);
+    const [inputNameValidationMessage, setInputNameValidationMessage] = React.useState('');
+    const [inputLinkValidationMessage, setInputLinkValidationMessage] = React.useState('');
+    const [inputsValid, setInputsValid] = React.useState(false);
 
     function handleSubmit(e) {
         e.preventDefault();
-        onAddPlace({ name: nameRef.current.value, link: linkRef.current.value });
+        onAddPlace({ name: cardName, link: cardLink });
     };
 
-    function handleChange() {
-        const nameValidity = nameRef.current.validity.valid;
-        const linkValidity = linkRef.current.validity.valid;
-        nameValidity && linkValidity ? onChange(true) : onChange(false)
-        nameValidity ? nameMessage.current.textContent = '' : nameMessage.current.textContent = nameRef.current.validationMessage
-        linkValidity ? linkMessage.current.textContent = '' : linkMessage.current.textContent = linkRef.current.validationMessage
+    function handleNameChange(e) {
+        const target = e.target;
+        const targetValidity = target.validity.valid;
+        setCardName(target.value);
+        targetValidity ? setInputNameValid(true) : setInputNameValid(false);
+        targetValidity ? setInputNameValidationMessage('') : setInputNameValidationMessage(target.validationMessage);
     }
 
+    function handleLinkChange(e) {
+        const target = e.target;
+        const targetValidity = target.validity.valid;
+        setCardLink(target.value);
+        targetValidity ? setInputLinkValid(true) : setInputLinkValid(false);
+        targetValidity ? setInputLinkValidationMessage('') : setInputLinkValidationMessage(target.validationMessage);
+    }
+
+    React.useEffect(() => {
+        inputLinkValid && inputNameValid ? setInputsValid(true) : setInputsValid(false);
+    }, [inputLinkValid, inputNameValid])
+
+    React.useEffect(() => {
+        setCardName('');
+        setCardLink('');
+        setInputNameValid(false);
+        setInputLinkValid(false);
+    }, [isOpen]);
+
     return (
-        <PopupWithForm type='add-card' name='addForm' title='Новое место' button='Создать' isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit} isValid={isValid}>
+        <PopupWithForm type='add-card' name='addForm' title='Новое место' button='Создать' isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit} isValid={inputsValid}>
             <div className="popup__section">
                 <input type="text" className="popup__input popup__input_type_title" name="titleInput"
-                    placeholder="Название" required minLength="2" maxLength="30" ref={nameRef} onChange={handleChange} />
-                {isValid ? <span className="popup__input-error" ref={nameMessage}></span> : <span className="popup__input-error popup__input-error_active" ref={nameMessage}></span>}
+                    placeholder="Название" required minLength="2" maxLength="30" onChange={handleNameChange} value={cardName || ''} />
+                <span className={`popup__input-error ${!inputsValid && 'popup__input-error_active'}`}>{inputNameValidationMessage}</span>
             </div>
             <div className="popup__section">
                 <input type="url" className="popup__input popup__input_type_link" name="linkInput" required
-                    placeholder="Ссылка на картинку" ref={linkRef} onChange={handleChange} />
-                {isValid ? <span className="popup__input-error" ref={linkMessage}></span> : <span className="popup__input-error popup__input-error_active" ref={linkMessage}></span>}
+                    placeholder="Ссылка на картинку" onChange={handleLinkChange} value={cardLink || ''} />
+                <span className={`popup__input-error ${!inputsValid && 'popup__input-error_active'}`}>{inputLinkValidationMessage}</span>
             </div>
-        </PopupWithForm>
+        </PopupWithForm >
     )
 }
 

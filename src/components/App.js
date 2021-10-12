@@ -20,31 +20,23 @@ function App() {
   const [selectedCard, setSelectedCard] = React.useState({ cardLink: '', cardName: '' })
   const [currentUser, setCurrentUser] = React.useState({})
   const [initialCards, setCards] = React.useState([]);
-  const [deletingCard, setDeletingCard] = React.useState('');
-  const [isInputsValid, setIsInputsValid] = React.useState(false)
+  const [deletingCardId, setDeletingCardId] = React.useState('');
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
-    setIsInputsValid(false)
   };
-
-  function toggleValidity(validity) {
-    setIsInputsValid(validity);
-  }
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
-    setIsInputsValid(true)
   };
 
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
-    setIsInputsValid(false);
   };
 
   function handleDeleteCardClick(id) {
     setIsDeletePopupOpen(true);
-    setDeletingCard(id);
+    setDeletingCardId(id);
   };
 
   function handleCardClick(card) {
@@ -53,28 +45,22 @@ function App() {
   };
 
   function handleUpdateUser(userData) {
-    api.setUserInfo(userData).then(() => {
-      userData.avatar = currentUser.avatar;
-      setCurrentUser(userData);
+    api.setUserInfo(userData).then((updatedData) => {
+      setCurrentUser(updatedData);
       setIsEditProfilePopupOpen(false);
     }).catch(err => console.log(err));
   };
 
-  function handleUpdateAvatar(userData) {
-    api.setAvatar(userData.avatar).then(() => {
-      userData.name = currentUser.name;
-      userData.about = currentUser.about;
-      setCurrentUser(userData);
+  function handleUpdateAvatar({ avatar }) {
+    api.setAvatar(avatar).then((updatedData) => {
+      setCurrentUser(updatedData);
       setIsEditAvatarPopupOpen(false);
     }).catch(err => console.log(err));
   };
 
   function handleAddPlaceSubmit(newCard) {
-    api.addNewCard(newCard).then((data) => {
-      newCard._id = data._id;
-      newCard.owner = data.owner;
-      newCard.likes = data.likes;
-      setCards([newCard, ...initialCards]);
+    api.addNewCard(newCard).then((createdCard) => {
+      setCards([createdCard, ...initialCards]);
       setIsAddPlacePopupOpen(false);
     }).catch(err => console.log(err));
   };
@@ -93,7 +79,7 @@ function App() {
       });
       setCards(updatedCards);
       setIsDeletePopupOpen(false);
-      setDeletingCard('');
+      setDeletingCardId('');
     }).catch(err => console.log(err));
   };
 
@@ -119,10 +105,10 @@ function App() {
       <CurrentUserContext.Provider value={currentUser}>
         <Header />
         <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onDeleteCard={handleDeleteCardClick} onCardClick={handleCardClick} initialCards={initialCards} onCardLike={handleCardLike} />
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} isValid={isInputsValid} onChange={toggleValidity} />
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} isValid={isInputsValid} onChange={toggleValidity} />
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} isValid={isInputsValid} onChange={toggleValidity} />
-        <DeletePlacePopup isOpen={isDeletePopupOpen} onClose={closeAllPopups} onCardDeleting={handleCardDeleting} deletingCard={deletingCard} />
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
+        <DeletePlacePopup isOpen={isDeletePopupOpen} onClose={closeAllPopups} onCardDeleting={handleCardDeleting} deletingCardId={deletingCardId} />
         <ImagePopup card={selectedCard} isOpen={isImagePopupOpen} onClose={closeAllPopups} />
         <Footer />
       </CurrentUserContext.Provider>

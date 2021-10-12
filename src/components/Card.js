@@ -21,7 +21,7 @@ const Card = ({ id, link, name, likes, owner, onDeleteCard, onCardClick, onCardL
 
     return (
         <article className="card">
-            <img className="card__image" src={link} alt="Фото места" onClick={handleClick} />
+            <img className="card__image" src={link} alt={name} onClick={handleClick} />
             {isOwn ? <button type="button" aria-label="Удалить" className="card__delete-btn" onClick={handleCardDelete}></button> : <button type="button" aria-label="Удалить" className="card__delete-btn card__delete-btn_disabled" disabled onClick={handleCardDelete}></button>}
             <div className="card__rectangle">
                 <h2 className="card__title">{name}</h2>
