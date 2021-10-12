@@ -25,6 +25,7 @@ const EditAvatarPopup = ({ isOpen, onClose, onUpdateAvatar }) => {
     React.useEffect(() => {
         setAvatar('');
         setInputValid(false);
+        setInputValidationMessage('')
     }, [isOpen]);
 
     return (

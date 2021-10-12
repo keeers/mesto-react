@@ -40,7 +40,9 @@ const AddPlacePopup = ({ isOpen, onClose, onAddPlace }) => {
         setCardName('');
         setCardLink('');
         setInputNameValid(false);
+        setInputNameValidationMessage('')
         setInputLinkValid(false);
+        setInputLinkValidationMessage('')
     }, [isOpen]);
 
     return (
